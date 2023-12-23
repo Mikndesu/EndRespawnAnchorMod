@@ -39,9 +39,10 @@ import java.util.Optional;
 
 @Mixin(Player.class)
 public class PlayerMixin {
-    @Inject(method = "findRespawnPositionAndUseSpawnBlock(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;FZZ)Ljava/util/Optional;", at = @At("HEAD"), cancellable = true)
-    private static void inject(ServerLevel p_36131_, BlockPos p_36132_, float p_36133_, boolean p_36134_,
-            boolean p_36135_, CallbackInfoReturnable<Optional<Vec3>> cir) {
+    @Inject(method = "findRespawnPositionAndUseSpawnBlock(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;FZZ)Ljava/util/Optional;",
+            at = @At("HEAD"), cancellable = true)
+    private static void inject(ServerLevel p_36131_, BlockPos p_36132_, float p_36133_, boolean p_36134_, boolean p_36135_,
+            CallbackInfoReturnable<Optional<Vec3>> cir) {
         BlockState blockstate = p_36131_.getBlockState(p_36132_);
         Block block = blockstate.getBlock();
         if (block instanceof EndRespawnAnchorBlock && blockstate.getValue(EndRespawnAnchorBlock.CHARGE) > 0

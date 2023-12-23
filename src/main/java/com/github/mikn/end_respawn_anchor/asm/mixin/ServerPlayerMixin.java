@@ -112,9 +112,9 @@ public class ServerPlayerMixin implements IServerPlayerMixin {
             CompoundTag tag = compound.getCompound(EndRespawnAnchor.MODID);
             p.end_respawn_anchor$setPreBlockPos(new BlockPos(tag.getInt(NBT_KEY_PLAYER_SPAWN_POS_X),
                     tag.getInt(NBT_KEY_PLAYER_SPAWN_POS_Y), tag.getInt(NBT_KEY_PLAYER_SPAWN_POS_Z)));
-            p.end_respawn_anchor$setPreRespawnDimension(Level.RESOURCE_KEY_CODEC
-                    .parse(NbtOps.INSTANCE, tag.get(NBT_KEY_PLAYER_SPAWN_DIMENSION))
-                    .resultOrPartial(EndRespawnAnchor.LOGGER::error).orElse(Level.OVERWORLD));
+            p.end_respawn_anchor$setPreRespawnDimension(
+                    Level.RESOURCE_KEY_CODEC.parse(NbtOps.INSTANCE, tag.get(NBT_KEY_PLAYER_SPAWN_DIMENSION))
+                            .resultOrPartial(EndRespawnAnchor.LOGGER::error).orElse(Level.OVERWORLD));
             p.end_respawn_anchor$setPreRespawnAngle(tag.getFloat(NBT_KEY_PLAYER_SPAWN_ANGLE));
         }
     }
