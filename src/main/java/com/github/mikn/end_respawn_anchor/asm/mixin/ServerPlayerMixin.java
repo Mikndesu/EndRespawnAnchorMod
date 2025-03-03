@@ -71,18 +71,16 @@ public abstract class ServerPlayerMixin {
     private void modifyArgs(Args args) {
         ServerPlayer serverPlayer = (ServerPlayer) (Object) this;
         if (shouldOverrideSpawnData(serverPlayer)) {
-            ResourceKey<Level> resourceKey;
-            BlockPos blockPos;
-            float respawnAngle;
+            ResourceKey<Level> resourceKey= Level.OVERWORLD;
+            BlockPos blockPos = serverLevel().getSharedSpawnPos();
+            float respawnAngle = serverPlayer.getRespawnAngle();
             if (serverPlayer.hasData(DataAttachmentInit.RESPAWN_DATA)) {
                 var data = serverPlayer.getData(DataAttachmentInit.RESPAWN_DATA);
-                resourceKey = data.getDimension();
-                blockPos = data.getBlockPos();
-                respawnAngle = data.getRespawnAngle();
-            } else {
-                resourceKey = Level.OVERWORLD;
-                blockPos = serverLevel().getSharedSpawnPos();
-                respawnAngle = serverPlayer.getRespawnAngle();
+                if(data.getBlockPos() != null) {
+                    resourceKey = data.getDimension();
+                    blockPos = data.getBlockPos();
+                    respawnAngle = data.getRespawnAngle();
+                }
             }
             args.set(0, serverPlayer.getServer().getLevel(resourceKey));
             args.set(1, blockPos);
