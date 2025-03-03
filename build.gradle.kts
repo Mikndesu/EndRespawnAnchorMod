@@ -80,7 +80,7 @@ curseforge {
     project(closureOf<CurseProject> {
         id = curseforge_project_id
         releaseType = "release"
-        addGameVersion("1.21")
+        addGameVersion("1.21.4")
         addGameVersion("NeoForge")
         mainArtifact(tasks.jar.get().archiveFile, closureOf<CurseArtifact>{
             displayName = "${archives_base_name} ${mod_version}"
@@ -103,7 +103,7 @@ modrinth {
     versionNumber.set(mod_version)
     versionType.set("release")
     loaders.add("neoforge")
-    gameVersions.addAll("1.21")
+    gameVersions.addAll("1.21.4")
     uploadFile.set(tasks.jar.get())
 }
 
