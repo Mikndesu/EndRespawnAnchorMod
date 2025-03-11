@@ -21,9 +21,16 @@
 
 package com.github.mikn.end_respawn_anchor.init;
 
+import com.github.mikn.end_respawn_anchor.EndRespawnAnchor;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 
 public class ItemInit {
-    public static final Item END_RESPAWN_ANCHOR = new BlockItem(BlockInit.END_RESPAWN_ANCHOR, new Item.Properties());
+    public static final Item END_RESPAWN_ANCHOR = new BlockItem(BlockInit.END_RESPAWN_ANCHOR,
+            new Item.Properties().setId(
+                    ResourceKey.create(Registries.ITEM,
+                            ResourceLocation.fromNamespaceAndPath(EndRespawnAnchor.MODID, "end_respawn_anchor"))));
 }

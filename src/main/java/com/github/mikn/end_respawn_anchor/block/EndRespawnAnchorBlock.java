@@ -26,12 +26,14 @@ import com.github.mikn.end_respawn_anchor.IServerPlayerMixin;
 
 import com.github.mikn.end_respawn_anchor.RespawnData;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -43,51 +45,62 @@ import net.minecraft.world.phys.BlockHitResult;
 public class EndRespawnAnchorBlock extends RespawnAnchorBlock {
 
     public EndRespawnAnchorBlock(Properties properties) {
-        super(properties);
+        super(properties.setId(ResourceKey.create(Registries.BLOCK,
+                ResourceLocation.fromNamespaceAndPath(EndRespawnAnchor.MODID, "end_respawn_anchor"))));
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
-            Player player, InteractionHand hand, BlockHitResult hitResult) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level,
+            BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (isRespawnFuel(stack) && canBeCharged(state)) {
             charge(player, level, pos, state);
             stack.consume(1, player);
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+            return InteractionResult.SUCCESS;
         } else {
-            return hand == InteractionHand.MAIN_HAND && isRespawnFuel(player.getItemInHand(InteractionHand.OFF_HAND))
-                    && canBeCharged(state) ? ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION
-                            : ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return hand == InteractionHand.MAIN_HAND && isRespawnFuel(
+                    player.getItemInHand(InteractionHand.OFF_HAND)) && canBeCharged(state)
+                            ? InteractionResult.PASS
+                            : InteractionResult.TRY_WITH_EMPTY_HAND;
         }
     }
 
     @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
-            BlockHitResult hitResult) {
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
+            Player player, BlockHitResult hitResult) {
         if (state.getValue(CHARGE) == 0) {
             return InteractionResult.PASS;
-        }
-        if (canSetSpawn(level)) {
-            ServerPlayer serverPlayer;
-            if (!(level.isClientSide
-                    || (serverPlayer = (ServerPlayer) player).getRespawnDimension() == level.dimension()
-                            && pos.equals(serverPlayer.getRespawnPosition()))) {
-                if (serverPlayer.getRespawnDimension() != Level.END) {
-                    var p = (IServerPlayerMixin) serverPlayer;
-                    RespawnData respawnData = new RespawnData(serverPlayer.getRespawnDimension(),
-                            serverPlayer.getRespawnPosition(), serverPlayer.getRespawnAngle());
-                    p.end_respawn_anchor$setRespawnData(respawnData);
-                }
-                serverPlayer.setRespawnPosition(level.dimension(), pos, 0.0f, false, true);
-                level.playSound(null, (double) pos.getX() + 0.5, (double) pos.getY() + 0.5, (double) pos.getZ() + 0.5,
-                        SoundEvents.RESPAWN_ANCHOR_SET_SPAWN, SoundSource.BLOCKS, 1.0f, 1.0f);
-                return InteractionResult.SUCCESS;
+        } else if (!canSetSpawn(level)) {
+            if (!level.isClientSide) {
+                this.explode(state, level, pos);
             }
+            return InteractionResult.SUCCESS;
+        } else {
+            if (!level.isClientSide) {
+                ServerPlayer serverplayer = (ServerPlayer) player;
+                if (serverplayer.getRespawnDimension() != level.dimension() || !pos.equals(
+                        serverplayer.getRespawnPosition())) {
+                    if (serverplayer.getRespawnDimension() != Level.END) {
+                        var p = (IServerPlayerMixin) serverplayer;
+                        RespawnData respawnData = new RespawnData(serverplayer.getRespawnDimension(),
+                                serverplayer.getRespawnPosition(), serverplayer.getRespawnAngle());
+                        p.end_respawn_anchor$setRespawnData(respawnData);
+                    }
+                    serverplayer.setRespawnPosition(level.dimension(), pos, 0.0F, false, true);
+                    level.playSound(
+                            null,
+                            (double) pos.getX() + 0.5,
+                            (double) pos.getY() + 0.5,
+                            (double) pos.getZ() + 0.5,
+                            SoundEvents.RESPAWN_ANCHOR_SET_SPAWN,
+                            SoundSource.BLOCKS,
+                            1.0F,
+                            1.0F);
+                    return InteractionResult.SUCCESS_SERVER;
+                }
+            }
+
             return InteractionResult.CONSUME;
         }
-        if (!level.isClientSide) {
-            this.explode(state, level, pos);
-        }
-        return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Override
