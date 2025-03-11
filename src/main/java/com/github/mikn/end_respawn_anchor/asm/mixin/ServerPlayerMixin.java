@@ -126,7 +126,7 @@ public abstract class ServerPlayerMixin implements IServerPlayerMixin {
             var p = (IServerPlayerMixin) serverPlayer;
             Optional<RespawnData> optionalRespawnData = Optional.ofNullable(p.end_respawn_anchor$getRespawnData());
             optionalRespawnData.ifPresent(
-                    respawnData -> args.set(0, serverPlayer.getServer().getLevel(respawnData.getDimension())));
+                    respawnData -> args.set(0, respawnData.getDimension()));
         }
     }
 
