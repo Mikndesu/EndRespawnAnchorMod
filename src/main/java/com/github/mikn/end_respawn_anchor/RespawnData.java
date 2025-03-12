@@ -21,6 +21,7 @@
 
 package com.github.mikn.end_respawn_anchor;
 
+import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -30,7 +31,7 @@ import net.minecraft.world.level.Level;
 public class RespawnData {
 
     private ResourceKey<Level> dimension;
-    private BlockPos blockPos;
+    private Optional<BlockPos> blockPos;
     private float respawnAngle;
 
     public static final String NBT_KEY_PLAYER_SPAWN_DIMENSION = "preSpawnDimension";
@@ -39,7 +40,7 @@ public class RespawnData {
     public static final String NBT_KEY_PLAYER_SPAWN_POS_Z = "preSpawnPosZ";
     public static final String NBT_KEY_PLAYER_SPAWN_ANGLE = "preSpawnAngle";
 
-    public RespawnData(ResourceKey<Level> dimension, BlockPos blockPos, float respawnAngle) {
+    public RespawnData(ResourceKey<Level> dimension, Optional<BlockPos> blockPos, float respawnAngle) {
         this.dimension = dimension;
         this.blockPos = blockPos;
         this.respawnAngle = respawnAngle;
@@ -49,7 +50,7 @@ public class RespawnData {
         return this.dimension;
     }
 
-    public BlockPos getBlockPos() {
+    public Optional<BlockPos> getBlockPos() {
         return this.blockPos;
     }
 
@@ -59,12 +60,13 @@ public class RespawnData {
 
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
-        if(this.blockPos == null) return tag;
-        tag.putString(NBT_KEY_PLAYER_SPAWN_DIMENSION, this.dimension.location().toString());
-        tag.putInt(NBT_KEY_PLAYER_SPAWN_POS_X, this.blockPos.getX());
-        tag.putInt(NBT_KEY_PLAYER_SPAWN_POS_Y, this.blockPos.getY());
-        tag.putInt(NBT_KEY_PLAYER_SPAWN_POS_Z, this.blockPos.getZ());
-        tag.putFloat(NBT_KEY_PLAYER_SPAWN_ANGLE, this.respawnAngle);
+        this.blockPos.ifPresent(pos -> {
+            tag.putString(NBT_KEY_PLAYER_SPAWN_DIMENSION, this.dimension.location().toString());
+            tag.putInt(NBT_KEY_PLAYER_SPAWN_POS_X, pos.getX());
+            tag.putInt(NBT_KEY_PLAYER_SPAWN_POS_Y, pos.getY());
+            tag.putInt(NBT_KEY_PLAYER_SPAWN_POS_Z, pos.getZ());
+            tag.putFloat(NBT_KEY_PLAYER_SPAWN_ANGLE, this.respawnAngle);
+        });
         return tag;
     }
 
@@ -77,6 +79,6 @@ public class RespawnData {
         int posZ = tag.getInt(NBT_KEY_PLAYER_SPAWN_POS_Z);
         float angle = tag.getFloat(NBT_KEY_PLAYER_SPAWN_ANGLE);
         BlockPos blockPos = new BlockPos(posX, posY, posZ);
-        return new RespawnData(dimension, blockPos, angle);
+        return new RespawnData(dimension, Optional.of(blockPos), angle);
     }
 }

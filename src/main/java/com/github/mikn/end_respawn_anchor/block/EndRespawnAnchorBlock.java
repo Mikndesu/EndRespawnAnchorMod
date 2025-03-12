@@ -25,10 +25,8 @@ import com.github.mikn.end_respawn_anchor.EndRespawnAnchor;
 import com.github.mikn.end_respawn_anchor.IServerPlayerMixin;
 
 import com.github.mikn.end_respawn_anchor.RespawnData;
+import java.util.Optional;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -81,7 +79,7 @@ public class EndRespawnAnchorBlock extends RespawnAnchorBlock {
                     if (serverplayer.getRespawnDimension() != Level.END) {
                         var p = (IServerPlayerMixin) serverplayer;
                         RespawnData respawnData = new RespawnData(serverplayer.getRespawnDimension(),
-                                serverplayer.getRespawnPosition(), serverplayer.getRespawnAngle());
+                            Optional.ofNullable(serverplayer.getRespawnPosition()), serverplayer.getRespawnAngle());
                         p.end_respawn_anchor$setRespawnData(respawnData);
                     }
                     serverplayer.setRespawnPosition(level.dimension(), pos, 0.0F, false, true);
