@@ -50,7 +50,8 @@ import java.util.Optional;
 public abstract class ServerPlayerMixin implements IServerPlayerMixin {
 
     @Unique
-    private RespawnData respawnData;
+    private RespawnData respawnData = new RespawnData(Level.OVERWORLD,
+            ((ServerPlayer) (Object) this).getServer().getLevel(Level.OVERWORLD).getSharedSpawnPos(), 0.0f);
 
     @Unique
     public void end_respawn_anchor$setRespawnData(RespawnData respawnData) {
@@ -111,11 +112,11 @@ public abstract class ServerPlayerMixin implements IServerPlayerMixin {
         if (shouldOverrideSpawnData(serverPlayer)) {
             var p = (IServerPlayerMixin) serverPlayer;
             Optional<RespawnData> optionalRespawnData = Optional.ofNullable(p.end_respawn_anchor$getRespawnData());
-            optionalRespawnData.ifPresent(respawnData -> {
+            if(optionalRespawnData.isPresent() && optionalRespawnData.get().getBlockPos() != null) {
                 args.set(0, serverPlayer.getServer().getLevel(respawnData.getDimension()));
                 args.set(1, respawnData.getBlockPos());
                 args.set(2, respawnData.getRespawnAngle());
-            });
+            }
         }
     }
 

@@ -59,6 +59,7 @@ public class RespawnData {
 
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
+        if(this.blockPos == null) return tag;
         tag.putString(NBT_KEY_PLAYER_SPAWN_DIMENSION, this.dimension.location().toString());
         tag.putInt(NBT_KEY_PLAYER_SPAWN_POS_X, this.blockPos.getX());
         tag.putInt(NBT_KEY_PLAYER_SPAWN_POS_Y, this.blockPos.getY());
