@@ -45,8 +45,7 @@ import net.minecraft.world.phys.BlockHitResult;
 public class EndRespawnAnchorBlock extends RespawnAnchorBlock {
 
     public EndRespawnAnchorBlock(Properties properties) {
-        super(properties.setId(ResourceKey.create(Registries.BLOCK,
-                ResourceLocation.fromNamespaceAndPath(EndRespawnAnchor.MODID, "end_respawn_anchor"))));
+        super(properties);
     }
 
     @Override

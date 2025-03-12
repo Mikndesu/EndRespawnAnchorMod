@@ -21,7 +21,11 @@
 
 package com.github.mikn.end_respawn_anchor.init;
 
+import com.github.mikn.end_respawn_anchor.EndRespawnAnchor;
 import com.github.mikn.end_respawn_anchor.block.EndRespawnAnchorBlock;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RespawnAnchorBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -29,10 +33,12 @@ import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 
 public class BlockInit {
-        public static final Block END_RESPAWN_ANCHOR = new EndRespawnAnchorBlock(
-                        BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK)
-                                        .instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops()
-                                        .strength(50.0F, 1200.0F)
-                                        .lightLevel((p_152639_) -> RespawnAnchorBlock.getScaledChargeLevel(p_152639_,
-                                                        15)));
+    public static final Block END_RESPAWN_ANCHOR = new EndRespawnAnchorBlock(
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).setId(
+                    ResourceKey.create(Registries.BLOCK,
+                            ResourceLocation.fromNamespaceAndPath(EndRespawnAnchor.MODID, "end_respawn_anchor")))
+                    .instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops()
+                    .strength(50.0F, 1200.0F)
+                    .lightLevel((p_152639_) -> RespawnAnchorBlock.getScaledChargeLevel(p_152639_,
+                            15)));
 }
