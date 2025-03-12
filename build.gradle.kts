@@ -24,6 +24,7 @@ val cloth_config_version: String by extra
 val mod_menu_version: String by extra
 val curseforge_project_id: String by extra
 val modrinth_project_id: String by extra
+val gameVersionArray = listOf("1.21.3", "1.21.4")
 
 repositories {
 	maven("https://maven.shedaniel.me/")
@@ -86,7 +87,7 @@ curseforge {
 	project(closureOf<CurseProject> {
 		id = curseforge_project_id
 		releaseType = "release"
-		addGameVersion("1.21")
+		gameVersionArray.forEach { version -> addGameVersion(version)}
         addGameVersion("Fabric")
 		mainArtifact(tasks.findByName("remapJar"), closureOf<CurseArtifact>{
 			displayName = "${project.base.archivesName.get()}"
@@ -113,7 +114,7 @@ modrinth {
     versionNumber.set(mod_version)
     versionName.set("${archives_base_name} ${mod_version}")
     uploadFile.set(tasks.remapJar.get())
-    gameVersions.addAll("1.21")
+	gameVersionArray.forEach { version -> gameVersions.addAll(version)}
     loaders.add("fabric")
     dependencies {
         required.project("fabric-api")
